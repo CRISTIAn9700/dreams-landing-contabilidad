@@ -237,11 +237,16 @@
                 <span>Acceso privado</span>
             </div>
             <h2 id="loginTitle">Ingresar a contabilidad</h2>
-            <p>Usa tu usuario y contraseña para continuar al modulo de contabilidad.</p>
-            <div class="login-hint">Acceso temporal: <strong>dreams</strong> / <strong>conta2026</strong></div>
+            <p>Usa tu correo y contraseña para continuar al modulo de contabilidad.</p>
+            <div class="login-tabs" aria-label="Opciones de acceso">
+                <button type="button" class="active" data-auth-mode="login">Ingresar</button>
+                <button type="button" data-auth-mode="signup">Crear cuenta</button>
+                <button type="button" data-auth-mode="reset">Recuperar</button>
+            </div>
+            <div class="login-hint">Temporal local: <strong>dreams@local.test</strong> / <strong>conta2026</strong></div>
             <form class="login-form" id="accountingLoginForm">
-                <label for="accountingUser">Usuario</label>
-                <input type="text" id="accountingUser" name="usuario" autocomplete="username" required>
+                <label for="accountingUser">Correo electronico</label>
+                <input type="email" id="accountingUser" name="email" autocomplete="username" required>
                 <label for="accountingPassword">Contraseña</label>
                 <input type="password" id="accountingPassword" name="password" autocomplete="current-password" required>
                 <p class="login-error" id="accountingLoginError" aria-live="polite"></p>
@@ -279,6 +284,9 @@
         </div>
     </footer>
 
-    <script src="assets/js/main.js?v=login2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script src="assets/js/main.js?v=supabase1"></script>
 </body>
 </html>

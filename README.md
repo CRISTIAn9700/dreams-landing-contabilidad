@@ -20,10 +20,28 @@ Esta carpeta contiene la version HTML5 editable de la landing principal de Dream
 
 El boton `Ingresar a contabilidad` abre un modal de acceso.
 
-- Usuario: `dreams`
+- Usuario: `dreams@local.test`
 - Contrasena: `conta2026`
 
-Este acceso es temporal y local. Debe reemplazarse por autenticacion real cuando se conecte con Supabase.
+Este acceso es temporal y local. Cuando Supabase este configurado, el sistema usara correo, contrasena, crear cuenta y recuperar contrasena con email.
+
+## Configuracion Supabase
+
+1. Crear un proyecto en Supabase.
+2. En Supabase, abrir SQL Editor y ejecutar `supabase/schema.sql`.
+3. En `assets/js/supabase-config.js`, pegar:
+
+```js
+window.DREAMS_SUPABASE_CONFIG = {
+    url: 'https://TU-PROYECTO.supabase.co',
+    anonKey: 'TU-ANON-KEY'
+};
+```
+
+4. En Authentication > URL Configuration, agregar el dominio publicado del sitio.
+5. Crear la primera cuenta desde el modal `Crear cuenta`, usando el correo principal.
+
+La tabla `accounting_records` permite que usuarios autenticados compartan la misma instancia de contabilidad. Cada venta, gasto, cliente y producto se guarda como registro sincronizado.
 
 ## Uso local
 

@@ -5,7 +5,7 @@ const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
 const today = new Date();
 guardAccountingSession();
-const state = loadState();
+let state = loadState();
 
 const forms = {
     sale: document.getElementById('saleForm'),
@@ -32,7 +32,7 @@ Object.values(forms).forEach(form => {
 if (filters.month) filters.month.value = String(today.getMonth() + 1);
 if (filters.year) filters.year.value = String(today.getFullYear());
 
-forms.sale?.addEventListener('submit', (e) => {
+forms.sale?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = formData(forms.sale);
     const invoiceFile = forms.sale.querySelector('[name="invoice"]')?.files?.[0];
@@ -52,12 +52,12 @@ forms.sale?.addEventListener('submit', (e) => {
     });
     ensureClient(data.client);
     ensureProduct(data.item, Number(data.amount));
-    persistAndRender();
+    await persistAndRender();
     forms.sale.reset();
     forms.sale.querySelector('[name="date"]').value = formatDate(today);
 });
 
-forms.expense?.addEventListener('submit', (e) => {
+forms.expense?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = formData(forms.expense);
     state.expenses.push({
@@ -67,12 +67,12 @@ forms.expense?.addEventListener('submit', (e) => {
         description: data.description,
         amount: Number(data.amount)
     });
-    persistAndRender();
+    await persistAndRender();
     forms.expense.reset();
     forms.expense.querySelector('[name="date"]').value = formatDate(today);
 });
 
-forms.client?.addEventListener('submit', (e) => {
+forms.client?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = formData(forms.client);
     state.clients.push({
@@ -81,11 +81,11 @@ forms.client?.addEventListener('submit', (e) => {
         country: data.country || 'Ecuador',
         contact: data.contact || 'Sin contacto'
     });
-    persistAndRender();
+    await persistAndRender();
     forms.client.reset();
 });
 
-forms.product?.addEventListener('submit', (e) => {
+forms.product?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = formData(forms.product);
     state.products.push({
@@ -95,26 +95,27 @@ forms.product?.addEventListener('submit', (e) => {
         price: Number(data.price || 0),
         stock: Number(data.stock || 0)
     });
-    persistAndRender();
+    await persistAndRender();
     forms.product.reset();
 });
 
 Object.values(filters).forEach(input => input?.addEventListener('input', render));
 
-document.getElementById('seedDataButton')?.addEventListener('click', () => {
+document.getElementById('seedDataButton')?.addEventListener('click', async () => {
     if (state.sales.length || state.expenses.length || state.clients.length || state.products.length) return;
     seedData();
-    persistAndRender();
+    await persistAndRender();
 });
 
 document.getElementById('exportButton')?.addEventListener('click', exportCsv);
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('[data-delete]');
     if (deleteButton) {
         const [collection, id] = deleteButton.dataset.delete.split(':');
         state[collection] = state[collection].filter(item => item.id !== id);
-        persistAndRender();
+        await window.dreamsSupabase?.deleteAccountingRecord?.(id);
+        await persistAndRender();
         return;
     }
 
@@ -130,7 +131,13 @@ function loadState() {
     return { sales: [], expenses: [], clients: [], products: [] };
 }
 
-function guardAccountingSession() {
+async function guardAccountingSession() {
+    if (window.dreamsSupabase?.configured()) {
+        const session = await window.dreamsSupabase.getSession();
+        if (!session) window.location.href = 'index.html#login-contabilidad';
+        return;
+    }
+
     const session = localStorage.getItem(SESSION_KEY);
     if (!session) {
         window.location.href = 'index.html#login-contabilidad';
@@ -208,6 +215,41 @@ function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function cloudRecordsFromState() {
+    return ['sales', 'expenses', 'clients', 'products'].flatMap(collection =>
+        state[collection].map(item => ({
+            id: item.id,
+            collection,
+            data: item
+        }))
+    );
+}
+
+async function saveCloudState() {
+    if (!window.dreamsSupabase?.configured()) return;
+    try {
+        await window.dreamsSupabase.upsertAccountingRecords(cloudRecordsFromState());
+    } catch (error) {
+        console.warn('No se pudo sincronizar con Supabase:', error.message);
+    }
+}
+
+async function hydrateCloudState() {
+    if (!window.dreamsSupabase?.configured()) return;
+    try {
+        const records = await window.dreamsSupabase.loadAccountingRecords();
+        if (!records) return;
+        state = { sales: [], expenses: [], clients: [], products: [] };
+        records.forEach(record => {
+            if (state[record.collection]) state[record.collection].push(record.data);
+        });
+        saveState();
+        render();
+    } catch (error) {
+        console.warn('No se pudo cargar Supabase:', error.message);
+    }
+}
+
 function formData(form) {
     return Object.fromEntries(new FormData(form).entries());
 }
@@ -264,9 +306,10 @@ function sumTax(sales) {
     return sales.reduce((total, sale) => total + saleTax(sale), 0);
 }
 
-function persistAndRender() {
+async function persistAndRender() {
     saveState();
     render();
+    await saveCloudState();
 }
 
 function setText(id, value) {
@@ -700,4 +743,5 @@ function escapeHtml(value) {
 }
 
 render();
+hydrateCloudState();
 setInterval(updateClock, 30000);

@@ -22,8 +22,10 @@ const accountingLoginForm = document.getElementById('accountingLoginForm');
 const accountingUser = document.getElementById('accountingUser');
 const accountingPassword = document.getElementById('accountingPassword');
 const accountingLoginError = document.getElementById('accountingLoginError');
-const TEMP_ACCOUNTING_USER = 'dreams';
+const authModeButtons = document.querySelectorAll('[data-auth-mode]');
+const TEMP_ACCOUNTING_USER = 'dreams@local.test';
 const TEMP_ACCOUNTING_PASSWORD = 'conta2026';
+let authMode = 'login';
 
 function openAccountingLogin() {
     closeMobileNav();
@@ -33,6 +35,22 @@ function openAccountingLogin() {
     document.body.style.overflow = 'hidden';
     setTimeout(() => accountingUser.focus(), 100);
 }
+
+function setAuthMode(mode) {
+    authMode = mode;
+    authModeButtons.forEach(button => button.classList.toggle('active', button.dataset.authMode === mode));
+    accountingPassword.required = mode !== 'reset';
+    accountingPassword.parentElement?.classList.toggle('is-hidden', false);
+    accountingPassword.style.display = mode === 'reset' ? 'none' : '';
+    document.querySelector('label[for="accountingPassword"]').style.display = mode === 'reset' ? 'none' : '';
+    const submitText = mode === 'signup' ? 'Crear cuenta' : mode === 'reset' ? 'Enviar recuperacion' : 'Ingresar';
+    accountingLoginForm.querySelector('button[type="submit"]').lastChild.textContent = ` ${submitText}`;
+    if (accountingLoginError) accountingLoginError.textContent = '';
+}
+
+authModeButtons.forEach(button => {
+    button.addEventListener('click', () => setAuthMode(button.dataset.authMode));
+});
 
 function closeAccountingLogin() {
     loginModal.classList.remove('open');
@@ -57,26 +75,46 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-accountingLoginForm.addEventListener('submit', (e) => {
+accountingLoginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!accountingLoginForm.checkValidity()) {
         accountingLoginForm.reportValidity();
         return;
     }
-    const user = accountingUser.value.trim();
+    const user = accountingUser.value.trim().toLowerCase();
     const password = accountingPassword.value.trim();
-    if (user !== TEMP_ACCOUNTING_USER || password !== TEMP_ACCOUNTING_PASSWORD) {
-        accountingLoginError.textContent = 'Usuario o contraseña incorrectos. Usa el acceso temporal indicado.';
-        accountingPassword.value = '';
-        accountingPassword.focus();
-        return;
+    try {
+        if (window.dreamsSupabase?.configured()) {
+            if (authMode === 'reset') {
+                await window.dreamsSupabase.resetPassword(user);
+                accountingLoginError.textContent = 'Te enviamos un correo para recuperar tu contraseña.';
+                return;
+            }
+            if (authMode === 'signup') {
+                await window.dreamsSupabase.signUp(user, password);
+                accountingLoginError.textContent = 'Cuenta creada. Revisa tu correo si Supabase solicita confirmacion.';
+                return;
+            }
+            await window.dreamsSupabase.signIn(user, password);
+            window.location.href = 'contabilidad.html';
+            return;
+        }
+
+        if (user !== TEMP_ACCOUNTING_USER || password !== TEMP_ACCOUNTING_PASSWORD) {
+            accountingLoginError.textContent = 'Usuario o contraseña incorrectos. Usa el acceso temporal indicado.';
+            accountingPassword.value = '';
+            accountingPassword.focus();
+            return;
+        }
+        localStorage.setItem('dreamsAccountingSession', JSON.stringify({
+            user,
+            enteredAt: new Date().toISOString(),
+            mode: 'temporary'
+        }));
+        window.location.href = 'contabilidad.html';
+    } catch (error) {
+        accountingLoginError.textContent = error.message || 'No se pudo completar la accion.';
     }
-    localStorage.setItem('dreamsAccountingSession', JSON.stringify({
-        user,
-        enteredAt: new Date().toISOString(),
-        mode: 'temporary'
-    }));
-    window.location.href = 'contabilidad.html';
 });
 
 function openLoginFromHash() {

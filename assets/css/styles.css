@@ -875,6 +875,35 @@ img {
     font-weight: 700;
 }
 
+.login-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 18px 0 14px;
+}
+
+.login-tabs button {
+    min-height: 38px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.login-tabs button.active,
+.login-tabs button:hover {
+    border-color: rgba(255,255,255,0.44);
+    background: #ffffff;
+    color: #000000;
+}
+
 .login-form label {
     font-family: var(--font-body);
     font-size: 11px;
