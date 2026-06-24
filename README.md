@@ -1,0 +1,51 @@
+# Dreams - Landing y contabilidad
+
+Esta carpeta contiene la version HTML5 editable de la landing principal de Dreams y el modulo interno de contabilidad conectado mediante un acceso temporal.
+
+## Estructura
+
+- `index.html`: landing principal.
+- `contabilidad.html`: vision general del sistema contable.
+- `ventas.html`: registro de ventas, cliente, producto, IVA y respaldo PDF.
+- `gastos.html`: registro de egresos.
+- `clientes.html`: base de clientes.
+- `productos.html`: catalogo de productos y servicios.
+- `balance.html`: reportes, graficos e historico.
+- `assets/css/styles.css`: estilos de la landing.
+- `assets/css/accounting.css`: estilos del sistema de contabilidad.
+- `assets/js/main.js`: interaccion de la landing y login temporal.
+- `assets/js/accounting.js`: logica local de contabilidad.
+
+## Acceso temporal
+
+El boton `Ingresar a contabilidad` abre un modal de acceso.
+
+- Usuario: `dreams`
+- Contrasena: `conta2026`
+
+Este acceso es temporal y local. Debe reemplazarse por autenticacion real cuando se conecte con Supabase.
+
+## Uso local
+
+Desde esta carpeta:
+
+```bash
+python3 -m http.server 8775
+```
+
+Abrir:
+
+```text
+http://127.0.0.1:8775/index.html
+```
+
+## Reglas de preservacion
+
+- Mantener la identidad visual de la landing principal.
+- Mantener la linea visual naranja/blanco del sistema de contabilidad.
+- Mantener las fuentes: DM Sans para cuerpo/navegacion/botones y Playfair Display para titulares/metricas/menu movil.
+- Conservar el hero full-screen con video, overlay oscuro, titular centrado y textos verticales de scroll en desktop.
+- Conservar los radios tipo pill, bordes finos, botones outline/ghost y hovers sutiles.
+- Conservar las transiciones `0.3s`, reveal-on-scroll, `fadeInUp`, contadores animados y scroll suave.
+- Conservar los breakpoints actuales: 1024px, 768px y 480px.
+- No reconstruir desde cero: cualquier cambio futuro debe hacerse sobre esta base.

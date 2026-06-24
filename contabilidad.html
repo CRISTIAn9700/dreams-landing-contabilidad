@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreams – Contabilidad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="assets/img/favicon-dreams.png">
+    <link rel="apple-touch-icon" href="assets/img/favicon-dreams.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/accounting.css?v=sidebar8">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="accounting-sidebar">
+            <button class="sidebar-toggle" type="button" aria-label="Ocultar menú de contabilidad" aria-expanded="true"><span></span><span></span></button>
+            <a class="brand" href="index.html">
+                <img src="assets/img/logo-dreams-conta.png" alt="Dreams Contabilidad">
+            </a>
+            <nav class="side-nav" aria-label="Navegación de contabilidad">
+                <a href="contabilidad.html" class="active">Visión general</a>
+                <a href="ventas.html">Ventas</a>
+                <a href="gastos.html">Gastos</a>
+                <a href="clientes.html">Clientes</a>
+                <a href="productos.html">Productos</a>
+                <a href="balance.html">Balance</a>
+            </nav>
+            <div class="sidebar-foot">
+                <span>Periodo activo</span>
+                <strong id="activePeriodLabel">Todos</strong>
+                <a href="index.html" class="ghost-link">Volver al inicio</a>
+            </div>
+        </aside>
+
+        <main class="accounting-main">
+            <header class="accounting-header">
+                <div>
+                    <div class="section-label"><span>Sistema interno</span></div>
+                    <h1>Contabilidad Dreams</h1>
+                    <p>Una visión general para revisar ventas del mes, gastos, IVA estimado, utilidad, calendario comercial y productos con mejor salida.</p>
+                </div>
+                <div class="header-panel">
+                    <div class="ecuador-clock">
+                        <span>Tulcán, Ecuador</span>
+                        <strong id="ecuadorTime">--:--</strong>
+                        <small id="ecuadorDate">Fecha actual</small>
+                    </div>
+                    <div class="header-actions">
+                        <button class="pill-button" type="button" id="seedDataButton">Cargar ejemplo</button>
+                        <button class="pill-button light" type="button" id="exportButton">Exportar CSV</button>
+                    </div>
+                </div>
+            </header>
+
+            <section class="filter-band" aria-label="Filtros de periodo">
+                <label>
+                    Vista
+                    <select id="periodType">
+                        <option value="all">Todo</option>
+                        <option value="month">Mensual</option>
+                        <option value="semester">Semestral</option>
+                        <option value="year">Anual</option>
+                    </select>
+                </label>
+                <label>
+                    Mes
+                    <select id="periodMonth">
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </label>
+                <label>
+                    Semestre
+                    <select id="periodSemester">
+                        <option value="1">Enero - Junio</option>
+                        <option value="2">Julio - Diciembre</option>
+                    </select>
+                </label>
+                <label>
+                    Año
+                    <input type="number" id="periodYear" min="2012" max="2100">
+                </label>
+            </section>
+
+            <section class="metric-grid compact-metrics summary-pills reveal-up" id="resumen">
+                <article class="metric-card">
+                    <span>Ventas del mes</span>
+                    <strong id="salesMetric">$0.00</strong>
+                    <small>Ingresos registrados</small>
+                </article>
+                <article class="metric-card">
+                    <span>Gastos del mes</span>
+                    <strong id="expensesMetric">$0.00</strong>
+                    <small>Salidas operativas</small>
+                </article>
+                <article class="metric-card accent-card">
+                    <span>IVA mensual</span>
+                    <strong id="vatMetric">$0.00</strong>
+                    <small>Estimado referencial</small>
+                </article>
+                <article class="metric-card">
+                    <span>Utilidad mensual</span>
+                    <strong id="profitMetric">$0.00</strong>
+                    <small>Ventas menos gastos</small>
+                </article>
+                <article class="metric-card">
+                    <span>Clientes</span>
+                    <strong id="clientsMetric">0</strong>
+                    <small>Base activa</small>
+                </article>
+            </section>
+
+            <section class="quick-grid compact-actions shortcut-buttons reveal-up">
+                <a class="quick-card" href="ventas.html">
+                    <span>Registro rápido</span>
+                    <strong>Nueva venta</strong>
+                    <small>Elige cliente, producto y adjunta respaldo</small>
+                </a>
+                <a class="quick-card" href="gastos.html">
+                    <span>Control rápido</span>
+                    <strong>Nuevo gasto</strong>
+                    <small>Registra salidas y categorías</small>
+                </a>
+                <a class="quick-card" href="clientes.html">
+                    <span>Relaciones</span>
+                    <strong>Clientes</strong>
+                    <small>Gestiona cartera y contactos</small>
+                </a>
+                <a class="quick-card sri-card" href="https://www.sri.gob.ec/facturador-sri" target="_blank" rel="noopener">
+                    <span>SRI Ecuador</span>
+                    <strong>Facturación electrónica</strong>
+                    <small>Ir al Facturador SRI oficial</small>
+                </a>
+            </section>
+
+            <section class="overview-grid dashboard-layout">
+                <article class="panel flow-panel reveal-up">
+                    <div class="panel-head">
+                        <div>
+                            <span class="mini-label">Resumen mensual</span>
+                            <h2>Flujo del mes</h2>
+                        </div>
+                        <strong id="monthlySummary">Sin datos</strong>
+                    </div>
+                    <div class="flow-grid">
+                        <div><span>Ventas</span><strong id="flowSales">$0.00</strong></div>
+                        <div><span>Gastos</span><strong id="flowExpenses">$0.00</strong></div>
+                        <div><span>IVA</span><strong id="flowVat">$0.00</strong></div>
+                        <div><span>Resultado</span><strong id="flowProfit">$0.00</strong></div>
+                    </div>
+                    <div class="bar-chart compact-chart" id="cashflowChart"></div>
+                </article>
+
+                <article class="panel slim-panel reveal-up">
+                    <div class="panel-head">
+                        <div>
+                            <span class="mini-label">Tienda</span>
+                            <h2>Productos más vendidos</h2>
+                        </div>
+                    </div>
+                    <div class="list-stack" id="topProductsList"></div>
+                </article>
+            </section>
+
+            <section class="overview-grid calendar-layout dashboard-layout">
+                <article class="panel slim-panel reveal-up">
+                    <div class="panel-head">
+                        <div>
+                            <span class="mini-label">Calendario</span>
+                            <h2>Ventas por fecha</h2>
+                        </div>
+                        <strong id="calendarMonthLabel">Mes actual</strong>
+                    </div>
+                    <div class="calendar-grid" id="salesCalendar"></div>
+                </article>
+
+                <article class="panel slim-panel reveal-up">
+                    <div class="panel-head">
+                        <div>
+                            <span class="mini-label">Detalle del día</span>
+                            <h2 id="calendarDetailTitle">Selecciona una fecha</h2>
+                        </div>
+                    </div>
+                    <div class="list-stack" id="calendarDetails"></div>
+                </article>
+            </section>
+
+            <datalist id="clientList"></datalist>
+            <datalist id="productList"></datalist>
+        </main>
+    </div>
+
+    <script src="assets/js/accounting.js?v=login2"></script>
+</body>
+</html>

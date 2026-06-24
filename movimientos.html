@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreams – Ventas y gastos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="assets/img/favicon-dreams.png">
+    <link rel="apple-touch-icon" href="assets/img/favicon-dreams.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/accounting.css?v=sidebar8">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="accounting-sidebar">
+            <button class="sidebar-toggle" type="button" aria-label="Ocultar menú de contabilidad" aria-expanded="true"><span></span><span></span></button>
+            <a class="brand" href="index.html"><img src="assets/img/logo-dreams-conta.png" alt="Dreams Contabilidad"></a>
+            <nav class="side-nav" aria-label="Navegación de contabilidad">
+                <a href="contabilidad.html">Visión general</a>
+                <a href="ventas.html">Ventas</a>
+                <a href="gastos.html">Gastos</a>
+                <a href="clientes.html">Clientes</a>
+                <a href="productos.html">Productos</a>
+                <a href="balance.html">Balance</a>
+            </nav>
+            <div class="sidebar-foot"><span>Periodo activo</span><strong id="activePeriodLabel">Todos</strong><a href="index.html" class="ghost-link">Volver al inicio</a></div>
+        </aside>
+        <main class="accounting-main">
+            <header class="accounting-header">
+                <div>
+                    <div class="section-label"><span>Operación diaria</span></div>
+                    <h1>Ventas y gastos</h1>
+                    <p>Registra los movimientos que alimentan el flujo de caja, el IVA estimado y el balance del negocio.</p>
+                </div>
+                <div class="header-panel">
+                    <div class="ecuador-clock"><span>Tulcán, Ecuador</span><strong id="ecuadorTime">--:--</strong><small id="ecuadorDate">Fecha actual</small></div>
+                    <div class="header-actions"><button class="pill-button" type="button" id="seedDataButton">Cargar ejemplo</button><button class="pill-button light" type="button" id="exportButton">Exportar CSV</button></div>
+                </div>
+            </header>
+            <section class="content-grid">
+                <article class="panel reveal-up" id="venta">
+                    <div class="panel-head"><div><span class="mini-label">Ingresos</span><h2>Nueva venta</h2></div></div>
+                    <form class="data-form" id="saleForm">
+                        <label>Fecha <input type="date" name="date" required></label>
+                        <label>Cliente <input type="text" name="client" list="clientList" placeholder="Nombre del cliente" required></label>
+                        <label>Producto o servicio <input type="text" name="item" list="productList" placeholder="Branding, sublimación..." required></label>
+                        <label>Monto <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required></label>
+                        <label>Notas <textarea name="notes" rows="3" placeholder="Detalle breve"></textarea></label>
+                        <button class="pill-button light" type="submit">Guardar venta</button>
+                    </form>
+                </article>
+                <article class="panel reveal-up" id="gasto">
+                    <div class="panel-head"><div><span class="mini-label">Egresos</span><h2>Nuevo gasto</h2></div></div>
+                    <form class="data-form" id="expenseForm">
+                        <label>Fecha <input type="date" name="date" required></label>
+                        <label>Categoría
+                            <select name="category" required>
+                                <option value="Producción">Producción</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Operación">Operación</option>
+                                <option value="Talento">Talento</option>
+                                <option value="Tecnología">Tecnología</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </label>
+                        <label>Descripción <input type="text" name="description" placeholder="Materiales, pauta, software..." required></label>
+                        <label>Monto <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required></label>
+                        <button class="pill-button light" type="submit">Guardar gasto</button>
+                    </form>
+                </article>
+            </section>
+            <section class="panel reveal-up">
+                <div class="panel-head"><div><span class="mini-label">Histórico</span><h2>Movimientos recientes</h2></div></div>
+                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Categoría / Cliente</th><th>Monto</th><th></th></tr></thead><tbody id="historyTable"></tbody></table></div>
+            </section>
+            <datalist id="clientList"></datalist>
+            <datalist id="productList"></datalist>
+        </main>
+    </div>
+    <script src="assets/js/accounting.js?v=login2"></script>
+</body>
+</html>

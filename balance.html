@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreams – Balance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="assets/img/favicon-dreams.png">
+    <link rel="apple-touch-icon" href="assets/img/favicon-dreams.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/accounting.css?v=sidebar8">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="accounting-sidebar">
+            <button class="sidebar-toggle" type="button" aria-label="Ocultar menú de contabilidad" aria-expanded="true"><span></span><span></span></button>
+            <a class="brand" href="index.html"><img src="assets/img/logo-dreams-conta.png" alt="Dreams Contabilidad"></a>
+            <nav class="side-nav" aria-label="Navegación de contabilidad"><a href="contabilidad.html">Visión general</a><a href="ventas.html">Ventas</a><a href="gastos.html">Gastos</a><a href="clientes.html">Clientes</a><a href="productos.html">Productos</a><a href="balance.html" class="active">Balance</a></nav>
+            <div class="sidebar-foot"><span>Periodo activo</span><strong id="activePeriodLabel">Todos</strong><a href="index.html" class="ghost-link">Volver al inicio</a></div>
+        </aside>
+        <main class="accounting-main">
+            <header class="accounting-header"><div><div class="section-label"><span>Reportes</span></div><h1>Balance</h1><p>Revisa ventas por mes, gastos por categoría, histórico de movimientos y estado general del periodo.</p></div><div class="header-panel"><div class="ecuador-clock"><span>Tulcán, Ecuador</span><strong id="ecuadorTime">--:--</strong><small id="ecuadorDate">Fecha actual</small></div><div class="header-actions"><button class="pill-button light" type="button" id="exportButton">Exportar CSV</button></div></div></header>
+            <section class="filter-band" aria-label="Filtros de periodo">
+                <label>Vista<select id="periodType"><option value="all">Todo</option><option value="month">Mensual</option><option value="semester">Semestral</option><option value="year">Anual</option></select></label>
+                <label>Mes<select id="periodMonth"><option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></label>
+                <label>Semestre<select id="periodSemester"><option value="1">Enero - Junio</option><option value="2">Julio - Diciembre</option></select></label>
+                <label>Año<input type="number" id="periodYear" min="2012" max="2100"></label>
+            </section>
+            <section class="metric-grid compact-metrics balance-summary reveal-up"><article class="metric-card"><span>Ventas</span><strong id="salesMetric">$0.00</strong><small>Periodo filtrado</small></article><article class="metric-card"><span>Gastos</span><strong id="expensesMetric">$0.00</strong><small>Periodo filtrado</small></article><article class="metric-card accent-card"><span>IVA</span><strong id="vatMetric">$0.00</strong><small>Estimado</small></article><article class="metric-card"><span>Utilidad</span><strong id="profitMetric">$0.00</strong><small>Resultado</small></article></section>
+            <section class="insight-grid balance-insights reveal-up">
+                <article class="insight-card"><span>Ventas registradas</span><strong id="salesCountMetric">0</strong><small>Movimientos del periodo</small></article>
+                <article class="insight-card"><span>Producción vendida</span><strong id="productionMetric">0</strong><small>Servicios/productos facturados</small></article>
+                <article class="insight-card"><span>Producto líder</span><strong id="topProductMetric">Sin datos</strong><small>Mayor facturación</small></article>
+                <article class="insight-card"><span>Mejor fecha</span><strong id="bestDateMetric">Sin datos</strong><small>Día con más ventas</small></article>
+            </section>
+            <section class="panel balance-panel reveal-up">
+                <div class="panel-head"><div><span class="mini-label">Lectura financiera</span><h2>Balance e histórico</h2></div><strong id="balanceStatus">Sin datos</strong></div>
+                <div class="balance-grid"><div class="chart-card wide-chart"><h3>Curva anual de ventas</h3><div class="line-chart" id="yearLineChart"></div></div><div class="chart-card"><h3>Ventas por mes</h3><div class="bar-chart" id="salesChart"></div></div><div class="chart-card"><h3>Gastos por categoría</h3><div class="category-list" id="categoryBreakdown"></div></div></div>
+                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Categoría / Cliente</th><th>Monto</th><th></th></tr></thead><tbody id="historyTable"></tbody></table></div>
+            </section>
+        </main>
+    </div>
+    <script src="assets/js/accounting.js?v=login2"></script>
+</body>
+</html>
