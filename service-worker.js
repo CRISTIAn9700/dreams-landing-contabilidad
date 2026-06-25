@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dreams-contabilidad-v5';
+const CACHE_NAME = 'dreams-contabilidad-v6';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,9 +10,9 @@ const APP_SHELL = [
   './balance.html',
   './movimientos.html',
   './assets/css/styles.css?v=security1',
-  './assets/css/accounting.css?v=savefix4',
+  './assets/css/accounting.css?v=savefix5',
   './assets/js/main.js?v=security1',
-  './assets/js/accounting.js?v=savefix4',
+  './assets/js/accounting.js?v=savefix5',
   './assets/js/supabase-config.js',
   './assets/js/supabase-client.js',
   './assets/img/favicon-dreams.png',

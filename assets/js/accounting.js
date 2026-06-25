@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'dreamsAccountingData';
 const RESET_KEY = 'dreamsAccountingResetVersion';
-const DATA_RESET_VERSION = '2026-06-25-clean-start-v3';
+const DATA_RESET_VERSION = '2026-06-25-clean-start-v4';
+const DATA_EPOCH_MS = 1782359463000;
 const SIDEBAR_KEY = 'dreamsAccountingSidebarCollapsed';
 const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
@@ -235,7 +236,13 @@ async function hydrateCloudState() {
     if (!window.dreamsSupabase?.configured()) return;
     try {
         const records = await window.dreamsSupabase.loadAccountingRecords();
-        if (!records || !records.length) {
+        const freshRecords = (records || []).filter(isFreshRecord);
+        const staleRecords = (records || []).filter(record => !isFreshRecord(record));
+        if (staleRecords.length) {
+            await Promise.all(staleRecords.map(record => window.dreamsSupabase.deleteAccountingRecord(record.id)));
+        }
+
+        if (!freshRecords.length) {
             state = emptyState();
             cloudReady = true;
             saveState();
@@ -243,7 +250,7 @@ async function hydrateCloudState() {
             setSyncMessage('Contabilidad reiniciada. Lista para empezar desde cero.');
             return;
         }
-        const mergedState = mergeState(state, records);
+        const mergedState = mergeState(state, freshRecords);
         state = mergedState;
         cloudReady = true;
         saveState();
@@ -289,6 +296,11 @@ function mergeState(localState, records) {
 
 function emptyState() {
     return { sales: [], expenses: [], clients: [], products: [] };
+}
+
+function isFreshRecord(record) {
+    const createdFromId = Number(String(record?.id || '').split('-')[0]);
+    return Number.isFinite(createdFromId) && createdFromId >= DATA_EPOCH_MS;
 }
 
 function setSyncMessage(message) {
