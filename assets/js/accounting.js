@@ -3,7 +3,7 @@ const SIDEBAR_KEY = 'dreamsAccountingSidebarCollapsed';
 const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
 const today = new Date();
-guardAccountingSession();
+let cloudReady = false;
 let state = loadState();
 
 const forms = {
@@ -134,10 +134,11 @@ async function guardAccountingSession() {
     if (window.dreamsSupabase?.configured()) {
         const session = await window.dreamsSupabase.getSession();
         if (!session) window.location.href = 'index.html#login-contabilidad';
-        return;
+        return Boolean(session);
     }
 
     window.location.href = 'index.html#login-contabilidad';
+    return false;
 }
 
 function enhanceSidebar() {
@@ -211,11 +212,13 @@ function cloudRecordsFromState() {
 }
 
 async function saveCloudState() {
-    if (!window.dreamsSupabase?.configured()) return;
+    if (!cloudReady || !window.dreamsSupabase?.configured()) return;
     try {
         await window.dreamsSupabase.upsertAccountingRecords(cloudRecordsFromState());
+        setSyncMessage('Guardado en la nube.');
     } catch (error) {
         console.warn('No se pudo sincronizar con Supabase:', error.message);
+        setSyncMessage('Guardado localmente. No se pudo sincronizar con la nube.');
     }
 }
 
@@ -223,16 +226,75 @@ async function hydrateCloudState() {
     if (!window.dreamsSupabase?.configured()) return;
     try {
         const records = await window.dreamsSupabase.loadAccountingRecords();
-        if (!records) return;
-        state = { sales: [], expenses: [], clients: [], products: [] };
-        records.forEach(record => {
-            if (state[record.collection]) state[record.collection].push(record.data);
-        });
+        if (!records || !records.length) {
+            cloudReady = true;
+            await saveCloudState();
+            return;
+        }
+        const mergedState = mergeState(state, records);
+        state = mergedState;
+        cloudReady = true;
         saveState();
         render();
+        await saveCloudState();
     } catch (error) {
+        cloudReady = true;
         console.warn('No se pudo cargar Supabase:', error.message);
+        setSyncMessage('No se pudo cargar la nube. Los cambios se guardarán localmente.');
     }
+}
+
+function mergeState(localState, records) {
+    const merged = {
+        sales: [...localState.sales],
+        expenses: [...localState.expenses],
+        clients: [...localState.clients],
+        products: [...localState.products]
+    };
+
+    const indexes = Object.fromEntries(
+        Object.keys(merged).map(collection => [
+            collection,
+            new Map(merged[collection].map((item, index) => [item.id, index]))
+        ])
+    );
+
+    records.forEach(record => {
+        const collection = record.collection;
+        const item = record.data;
+        if (!merged[collection] || !item?.id) return;
+        const existingIndex = indexes[collection].get(item.id);
+        if (existingIndex === undefined) {
+            indexes[collection].set(item.id, merged[collection].length);
+            merged[collection].push(item);
+        } else {
+            merged[collection][existingIndex] = item;
+        }
+    });
+
+    return merged;
+}
+
+function setSyncMessage(message) {
+    let target = document.getElementById('syncStatusMessage');
+    if (!target) {
+        target = document.createElement('div');
+        target.id = 'syncStatusMessage';
+        target.className = 'sync-status-message';
+        document.body.appendChild(target);
+    }
+    target.textContent = message;
+    target.classList.add('visible');
+    clearTimeout(setSyncMessage.timer);
+    setSyncMessage.timer = setTimeout(() => target.classList.remove('visible'), 3200);
+}
+
+async function startAccountingApp() {
+    const allowed = await guardAccountingSession();
+    if (!allowed) return;
+    render();
+    await hydrateCloudState();
+    setInterval(updateClock, 30000);
 }
 
 function formData(form) {
@@ -727,6 +789,4 @@ function escapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
-render();
-hydrateCloudState();
-setInterval(updateClock, 30000);
+startAccountingApp();
