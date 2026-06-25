@@ -23,8 +23,11 @@ const accountingUser = document.getElementById('accountingUser');
 const accountingPassword = document.getElementById('accountingPassword');
 const accountingLoginError = document.getElementById('accountingLoginError');
 const authModeButtons = document.querySelectorAll('[data-auth-mode]');
-const TEMP_ACCOUNTING_USER = 'dreams@local.test';
-const TEMP_ACCOUNTING_PASSWORD = 'conta2026';
+const authPasswordGroup = document.querySelector('.auth-password-group');
+const accessRequestFields = document.querySelector('.access-request-fields');
+const accessName = document.getElementById('accessName');
+const accessMessage = document.getElementById('accessMessage');
+const ACCOUNTING_ACCESS_EMAIL = 'ocampo.otalvaro.cristian@gmail.com';
 let authMode = 'login';
 
 function openAccountingLogin() {
@@ -39,11 +42,14 @@ function openAccountingLogin() {
 function setAuthMode(mode) {
     authMode = mode;
     authModeButtons.forEach(button => button.classList.toggle('active', button.dataset.authMode === mode));
-    accountingPassword.required = mode !== 'reset';
-    accountingPassword.parentElement?.classList.toggle('is-hidden', false);
-    accountingPassword.style.display = mode === 'reset' ? 'none' : '';
-    document.querySelector('label[for="accountingPassword"]').style.display = mode === 'reset' ? 'none' : '';
-    const submitText = mode === 'signup' ? 'Crear cuenta' : mode === 'reset' ? 'Enviar recuperacion' : 'Ingresar';
+    const needsPassword = mode === 'login';
+    const requestsAccess = mode === 'request';
+    accountingPassword.required = needsPassword;
+    if (authPasswordGroup) authPasswordGroup.hidden = !needsPassword;
+    if (accessRequestFields) accessRequestFields.hidden = !requestsAccess;
+    if (accessName) accessName.required = requestsAccess;
+    if (accessMessage) accessMessage.required = false;
+    const submitText = mode === 'request' ? 'Enviar solicitud' : mode === 'reset' ? 'Enviar recuperacion' : 'Ingresar';
     accountingLoginForm.querySelector('button[type="submit"]').lastChild.textContent = ` ${submitText}`;
     if (accountingLoginError) accountingLoginError.textContent = '';
 }
@@ -84,34 +90,37 @@ accountingLoginForm.addEventListener('submit', async (e) => {
     const user = accountingUser.value.trim().toLowerCase();
     const password = accountingPassword.value.trim();
     try {
+        if (authMode === 'request') {
+            const subject = encodeURIComponent('Solicitud de acceso a contabilidad Dreams');
+            const body = encodeURIComponent([
+                'Hola, solicito acceso al sistema de contabilidad Dreams.',
+                '',
+                `Correo: ${user}`,
+                `Nombre o empresa: ${accessName.value.trim() || 'No indicado'}`,
+                `Motivo: ${accessMessage.value.trim() || 'No indicado'}`,
+                '',
+                'Por favor revisa esta solicitud y, si corresponde, envíame una invitación desde Supabase.'
+            ].join('\n'));
+            window.location.href = `mailto:${ACCOUNTING_ACCESS_EMAIL}?subject=${subject}&body=${body}`;
+            accountingLoginError.textContent = 'Se abrirá tu correo para enviar la solicitud de acceso.';
+            return;
+        }
+
+        if (!window.dreamsSupabase?.configured()) {
+            accountingLoginError.textContent = 'Acceso no disponible. La conexion segura no esta activa.';
+            return;
+        }
+
         if (window.dreamsSupabase?.configured()) {
             if (authMode === 'reset') {
                 await window.dreamsSupabase.resetPassword(user);
                 accountingLoginError.textContent = 'Te enviamos un correo para recuperar tu contraseña.';
                 return;
             }
-            if (authMode === 'signup') {
-                await window.dreamsSupabase.signUp(user, password);
-                accountingLoginError.textContent = 'Cuenta creada. Revisa tu correo si Supabase solicita confirmacion.';
-                return;
-            }
             await window.dreamsSupabase.signIn(user, password);
             window.location.href = 'contabilidad.html';
             return;
         }
-
-        if (user !== TEMP_ACCOUNTING_USER || password !== TEMP_ACCOUNTING_PASSWORD) {
-            accountingLoginError.textContent = 'Usuario o contraseña incorrectos. Usa el acceso temporal indicado.';
-            accountingPassword.value = '';
-            accountingPassword.focus();
-            return;
-        }
-        localStorage.setItem('dreamsAccountingSession', JSON.stringify({
-            user,
-            enteredAt: new Date().toISOString(),
-            mode: 'temporary'
-        }));
-        window.location.href = 'contabilidad.html';
     } catch (error) {
         accountingLoginError.textContent = error.message || 'No se pudo completar la accion.';
     }

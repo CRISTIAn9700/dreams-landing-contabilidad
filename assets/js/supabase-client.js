@@ -20,13 +20,6 @@
         return data;
     }
 
-    async function signUp(email, password) {
-        if (!client) throw new Error('Supabase no esta configurado.');
-        const { data, error } = await client.auth.signUp({ email, password });
-        if (error) throw error;
-        return data;
-    }
-
     async function resetPassword(email) {
         if (!client) throw new Error('Supabase no esta configurado.');
         const { data, error } = await client.auth.resetPasswordForEmail(email, {
@@ -72,7 +65,6 @@
         configured,
         getSession,
         signIn,
-        signUp,
         resetPassword,
         signOut,
         loadAccountingRecords,

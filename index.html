@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="assets/img/favicon-dreams.png">
     <link rel="apple-touch-icon" href="assets/img/favicon-dreams.png">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=login1">
+    <link rel="stylesheet" href="assets/css/styles.css?v=security1">
 </head>
 <body>
 
@@ -240,15 +240,22 @@
             <p>Usa tu correo y contraseña para continuar al modulo de contabilidad.</p>
             <div class="login-tabs" aria-label="Opciones de acceso">
                 <button type="button" class="active" data-auth-mode="login">Ingresar</button>
-                <button type="button" data-auth-mode="signup">Crear cuenta</button>
+                <button type="button" data-auth-mode="request">Solicitar acceso</button>
                 <button type="button" data-auth-mode="reset">Recuperar</button>
             </div>
-            <div class="login-hint">Temporal local: <strong>dreams@local.test</strong> / <strong>conta2026</strong></div>
             <form class="login-form" id="accountingLoginForm">
                 <label for="accountingUser">Correo electronico</label>
                 <input type="email" id="accountingUser" name="email" autocomplete="username" required>
-                <label for="accountingPassword">Contraseña</label>
-                <input type="password" id="accountingPassword" name="password" autocomplete="current-password" required>
+                <div class="auth-password-group">
+                    <label for="accountingPassword">Contraseña</label>
+                    <input type="password" id="accountingPassword" name="password" autocomplete="current-password" required>
+                </div>
+                <div class="access-request-fields" hidden>
+                    <label for="accessName">Nombre o empresa</label>
+                    <input type="text" id="accessName" name="name" autocomplete="name">
+                    <label for="accessMessage">Motivo de acceso</label>
+                    <textarea id="accessMessage" name="message" rows="3" placeholder="Cuéntanos brevemente por qué necesitas ingresar."></textarea>
+                </div>
                 <p class="login-error" id="accountingLoginError" aria-live="polite"></p>
                 <button type="submit" class="btn-start-project">
                     <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -287,6 +294,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase-config.js"></script>
     <script src="assets/js/supabase-client.js"></script>
-    <script src="assets/js/main.js?v=supabase1"></script>
+    <script src="assets/js/main.js?v=security1"></script>
 </body>
 </html>

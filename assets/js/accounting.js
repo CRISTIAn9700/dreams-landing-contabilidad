@@ -1,5 +1,4 @@
 const STORAGE_KEY = 'dreamsAccountingData';
-const SESSION_KEY = 'dreamsAccountingSession';
 const SIDEBAR_KEY = 'dreamsAccountingSidebarCollapsed';
 const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
@@ -138,21 +137,7 @@ async function guardAccountingSession() {
         return;
     }
 
-    const session = localStorage.getItem(SESSION_KEY);
-    if (!session) {
-        window.location.href = 'index.html#login-contabilidad';
-        return;
-    }
-    try {
-        const parsed = JSON.parse(session);
-        if (!parsed.user || !parsed.enteredAt) {
-            localStorage.removeItem(SESSION_KEY);
-            window.location.href = 'index.html#login-contabilidad';
-        }
-    } catch (error) {
-        localStorage.removeItem(SESSION_KEY);
-        window.location.href = 'index.html#login-contabilidad';
-    }
+    window.location.href = 'index.html#login-contabilidad';
 }
 
 function enhanceSidebar() {

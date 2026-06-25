@@ -1,6 +1,6 @@
 # Dreams - Landing y contabilidad
 
-Esta carpeta contiene la version HTML5 editable de la landing principal de Dreams y el modulo interno de contabilidad conectado mediante un acceso temporal.
+Esta carpeta contiene la version HTML5 editable de la landing principal de Dreams y el modulo interno de contabilidad protegido con Supabase Auth.
 
 ## Estructura
 
@@ -13,17 +13,16 @@ Esta carpeta contiene la version HTML5 editable de la landing principal de Dream
 - `balance.html`: reportes, graficos e historico.
 - `assets/css/styles.css`: estilos de la landing.
 - `assets/css/accounting.css`: estilos del sistema de contabilidad.
-- `assets/js/main.js`: interaccion de la landing y login temporal.
+- `assets/js/main.js`: interaccion de la landing y acceso privado por Supabase.
 - `assets/js/accounting.js`: logica local de contabilidad.
 
-## Acceso temporal
+## Acceso a contabilidad
 
-El boton `Ingresar a contabilidad` abre un modal de acceso.
+El boton `Ingresar a contabilidad` abre un modal de acceso privado.
 
-- Usuario: `dreams@local.test`
-- Contrasena: `conta2026`
-
-Este acceso es temporal y local. Cuando Supabase este configurado, el sistema usara correo, contrasena, crear cuenta y recuperar contrasena con email.
+- Solo usuarios creados o invitados desde Supabase pueden ingresar.
+- La opcion `Solicitar acceso` abre un correo dirigido al administrador para pedir una invitacion.
+- La opcion `Recuperar` envia el correo de recuperacion de contrasena desde Supabase.
 
 ## Configuracion Supabase
 
@@ -39,7 +38,8 @@ window.DREAMS_SUPABASE_CONFIG = {
 ```
 
 4. En Authentication > URL Configuration, agregar el dominio publicado del sitio.
-5. Crear la primera cuenta desde el modal `Crear cuenta`, usando el correo principal.
+5. Desactivar registros publicos en Authentication > Sign In / Providers.
+6. Crear o invitar usuarios desde Authentication > Users.
 
 La tabla `accounting_records` permite que usuarios autenticados compartan la misma instancia de contabilidad. Cada venta, gasto, cliente y producto se guarda como registro sincronizado.
 
