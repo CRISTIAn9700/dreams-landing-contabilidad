@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'dreamsAccountingData';
 const RESET_KEY = 'dreamsAccountingResetVersion';
-const DATA_RESET_VERSION = '2026-06-25-clean-start';
+const DATA_RESET_VERSION = '2026-06-25-clean-start-v2';
 const SIDEBAR_KEY = 'dreamsAccountingSidebarCollapsed';
 const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
