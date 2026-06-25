@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dreams-contabilidad-v4';
+const CACHE_NAME = 'dreams-contabilidad-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,9 +10,9 @@ const APP_SHELL = [
   './balance.html',
   './movimientos.html',
   './assets/css/styles.css?v=security1',
-  './assets/css/accounting.css?v=savefix3',
+  './assets/css/accounting.css?v=savefix4',
   './assets/js/main.js?v=security1',
-  './assets/js/accounting.js?v=savefix3',
+  './assets/js/accounting.js?v=savefix4',
   './assets/js/supabase-config.js',
   './assets/js/supabase-client.js',
   './assets/img/favicon-dreams.png',
@@ -40,6 +40,18 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  const acceptsHtml = event.request.headers.get('accept')?.includes('text/html');
+  if (acceptsHtml) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      }).catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
