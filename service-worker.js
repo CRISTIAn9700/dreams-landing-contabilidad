@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dreams-contabilidad-v6';
+const CACHE_NAME = 'dreams-contabilidad-v7';
 const APP_SHELL = [
   './',
   './index.html',
@@ -19,7 +19,8 @@ const APP_SHELL = [
   './assets/img/pwa/icon-192.png',
   './assets/img/pwa/icon-512.png',
   './assets/img/marca-con-iso.png',
-  './assets/img/logo-dreams-conta.png'
+  './assets/img/logo-dreams-conta.png',
+  './assets/video/hero-background.mp4'
 ];
 
 self.addEventListener('install', (event) => {
