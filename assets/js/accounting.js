@@ -1,9 +1,12 @@
 const STORAGE_KEY = 'dreamsAccountingData';
+const RESET_KEY = 'dreamsAccountingResetVersion';
+const DATA_RESET_VERSION = '2026-06-25-clean-start';
 const SIDEBAR_KEY = 'dreamsAccountingSidebarCollapsed';
 const DEFAULT_TAX_RATE = 0.15;
 const currency = new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' });
 const today = new Date();
 let cloudReady = false;
+applyDataResetVersion();
 let state = loadState();
 
 const forms = {
@@ -128,6 +131,12 @@ function loadState() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
     return { sales: [], expenses: [], clients: [], products: [] };
+}
+
+function applyDataResetVersion() {
+    if (localStorage.getItem(RESET_KEY) === DATA_RESET_VERSION) return;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.setItem(RESET_KEY, DATA_RESET_VERSION);
 }
 
 async function guardAccountingSession() {
